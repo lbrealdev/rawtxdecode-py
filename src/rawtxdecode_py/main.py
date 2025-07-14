@@ -10,9 +10,17 @@ import json
 
 
 def decoded_tx_output(decoded_tx: Any, *args) -> Dict[str, Any]:
+    TX_TYPE_LABELS = {
+        0: "Legacy",
+        1: "Access List",
+        2: "EIP-1559",
+    }
+
+    type_label = TX_TYPE_LABELS.get(decoded_tx.type_id, "Unknown type")
+
     tx_data = {
         "chainId": decoded_tx.chain_id,
-        "type": decoded_tx.type_id,
+        "type": type_label,
         "valid": decoded_tx.is_signature_valid,
         "hash": "0x" + decoded_tx.hash.hex(),
         "nonce": decoded_tx.nonce,
