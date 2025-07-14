@@ -1,0 +1,17 @@
+{
+  "chainId": 1,
+  "type": "EIP-1559",
+  "valid": true,
+  "hash": "0x948a92406335d5ece35b85cd310d661ede0e4337d747fd03cdf9fc9c976b79f8",
+  "nonce": 318142,
+  "gasLimit": 22111,
+  "maxFeePerGas": 8442595736,
+  "maxPriorityFeePerGas": 0,
+  "from": "0xdadb0d80178819f2319190d340ce9a924f783711",
+  "to": "0x388c818ca8b9251b393131c08a736a67ccb19297",
+  "publicKey": "0x044b2e1aafeb58abd7647fe3bba6a9fd8543edaa16e0f75406c5cb15e80cf6fe5e58108e667678c070c46e351dc98d80cbe66fe73d8f3e7608300832d948d6bb36",
+  "v": "01",
+  "r": "01029ef07d2e5c8c3117a5bef26164bc715b775336419f18df4a93b3714308a9",
+  "s": "3e77297d2187649da5f2639920a3252ed6405bbc7755e235ecb52f65670c103a",
+  "value": "79785174409892462"
+}
