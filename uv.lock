@@ -417,7 +417,7 @@ wheels = [
 [[package]]
 name = "rawtxdecode-py"
 version = "0.1.0"
-source = { virtual = "." }
+source = { editable = "." }
 dependencies = [
     { name = "eth-account" },
     { name = "eth-utils" },
@@ -434,6 +434,9 @@ requires-dist = [
     { name = "py-evm", specifier = ">=0.12.1b1" },
     { name = "rlp", specifier = ">=4.1.0" },
 ]
+
+[package.metadata.requires-dev]
+dev = []
 
 [[package]]
 name = "regex"

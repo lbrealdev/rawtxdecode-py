@@ -9,4 +9,4 @@ raw_tx_hex := '0x02f8b2018207a984010bef3384780f481a8301482094dac17f958d2ee523a22
     ruff format .
 
 @run:
-    uv run main.py {{ raw_tx_hex }}
+    uv run decode {{ raw_tx_hex }}

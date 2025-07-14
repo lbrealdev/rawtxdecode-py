@@ -1,10 +1,10 @@
 import sys
-from fields import (
+from rawtxdecode_py.fields import (
     extract_transaction_fields,
     InnerTransactionFields,
 )
-from decode import decode_raw_transaction
-from pubkey import recover_umcompressed_public_key
+from rawtxdecode_py.decode import decode_raw_transaction
+from rawtxdecode_py.pubkey import recover_umcompressed_public_key
 from typing import Any, Dict
 import json
 
@@ -35,9 +35,13 @@ def decoded_tx_output(decoded_tx: Any, *args) -> Dict[str, Any]:
 
 
 def main():
-    raw_tx_hex = sys.argv[1]
+    raw_tx_hex = sys.argv[1:]
 
-    decode_tx = decode_raw_transaction(raw_tx_hex)
+    if not raw_tx_hex:
+        print("Usage: decode <raw-transaction-hash>")
+        sys.exit(1)
+
+    decode_tx = decode_raw_transaction(raw_tx_hex[0])
 
     # Ordered and formatted transaction dictionary
     tx_type = decode_tx.type_id
