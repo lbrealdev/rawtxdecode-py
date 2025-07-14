@@ -2,10 +2,22 @@ from typing import Any, Dict
 from hexbytes import HexBytes
 
 
-def extract_transaction_fields(decoded: Any) -> Dict[str, Any]:
+class InnerTransactionFields:
+    def __init__(self, inner: Any):
+        self.__inner = inner
+
+    def as_dict(self) -> Dict[str, Any]:
+        return self.__inner.as_dict()
+
+
+def extract_transaction_fields(
+    fields: InnerTransactionFields, type_id: int, data: bytes
+) -> Dict[str, Any]:
     """
-    :param decoded: Decoded transaction object containing transaction fields.
-    :return: Ordered and formatted transaction dictionary for unsigned transaction serialization.
+    :param fields: Dictionary containing core transaction fields.
+    :param type_id: Transaction type identifier (e.g., 2 for EIP-1559).
+    :param data: Transaction input data in bytes.
+    :return: Ordered and formatted dictionary for unsigned transaction serialization.
     """
 
     ordered_keys = [
@@ -26,7 +38,7 @@ def extract_transaction_fields(decoded: Any) -> Dict[str, Any]:
         "max_priority_fee_per_gas": "maxPriorityFeePerGas",
     }
 
-    inner = decoded.__dict__.get("_inner").as_dict()
+    inner = fields.as_dict()
 
     tx_fields = {
         k: inner[k]
@@ -41,7 +53,7 @@ def extract_transaction_fields(decoded: Any) -> Dict[str, Any]:
         ]
     }
 
-    tx_fields.update({"type": decoded.type_id, "data": decoded.data})
+    tx_fields.update({"type": type_id, "data": data})
 
     ordered_tx_fields = {
         rename_map.get(k, k): (tx_fields[k] if k in tx_fields else None)

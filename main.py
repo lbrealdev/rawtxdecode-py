@@ -1,18 +1,19 @@
-from eth.vm.forks.arrow_glacier.transactions import (
-    ArrowGlacierTransactionBuilder as TransactionBuilder,
-)
 from eth_utils import (
     to_bytes,
     decode_hex,
 )
-from eth_keys.datatypes import Signature, PublicKey
+from eth_keys.datatypes import Signature
 from eth_account._utils.signing import extract_chain_id, to_standard_v
 from eth_account._utils.legacy_transactions import (
     serializable_unsigned_transaction_from_dict,
 )
 import sys
 
-from fields import extract_transaction_fields
+from fields import (
+    extract_transaction_fields,
+    InnerTransactionFields,
+)
+from decode import decode_raw_transaction
 
 
 def convert_hex_to_bytes(tx_hex: str) -> bytes:
@@ -23,12 +24,13 @@ def convert_hex_to_bytes(tx_hex: str) -> bytes:
     return to_bytes(hexstr=tx_hex)
 
 
-def decode_raw_transaction(tx: bytes) -> dict:
-    decoded_tx = TransactionBuilder().decode(tx)
-    return decoded_tx
-
-
-def tx_signature(v, r, s):
+def tx_signature(v: int, r: int, s: int) -> Signature:
+    """
+    :param v: Recovery identifier from Ethereum transaction signature.
+    :param r: R component of the ECDSA signature.
+    :param s: S component of the ECDSA signature.
+    :return: Signature object in VRS (standardized) format.
+    """
     signature = Signature(vrs=(to_standard_v(extract_chain_id(v)[1]), r, s))
     return signature
 
@@ -49,15 +51,17 @@ def main():
     tx_bytes = convert_hex_to_bytes(hex_input)
     decode_tx = decode_raw_transaction(tx_bytes)
 
-    fields = extract_transaction_fields(decode_tx)
+    # Ordered and formatted transaction dictionary
+    tx_type = decode_tx.type_id
+    tx_data = decode_tx.data
+    tx_fields = InnerTransactionFields(decode_tx._inner)
 
-    vrs = {
-        "v": decode_tx.y_parity,
-        "r": decode_tx.r,
-        "s": decode_tx.s,
-    }
+    ordered_fields = extract_transaction_fields(tx_fields, tx_type, tx_data)
 
-    sign = tx_signature(vrs["v"], vrs["r"], vrs["s"])
+    # Transaction ECDSA digital signature
+    v, r, s = decode_tx.y_parity, decode_tx.r, decode_tx.s
+
+    sign = tx_signature(v, r, s)
 
     # Debug fields dict types
     # for k, v in fields().items():
@@ -67,7 +71,7 @@ def main():
     # for k, v in vrs.items():
     #     print(f"Key: {k}, Value: {type(v)}")
 
-    unsigned_tx_object = serializable_unsigned_transaction_from_dict(fields)
+    unsigned_tx_object = serializable_unsigned_transaction_from_dict(ordered_fields)
     unsigned_tx_hash_bytes = decode_hex(unsigned_tx_object.hash().hex())
     public_key = sign.recover_public_key_from_msg_hash(unsigned_tx_hash_bytes)
 
@@ -80,13 +84,17 @@ def main():
 
     # print(decode_tx.y_parity)
 
-    test = get_unsigned_tx_hash(fields)
+    test = get_unsigned_tx_hash(ordered_fields)
     test_unsigned = decode_hex(test[0])
     test_pubkey = sign.recover_public_key_from_msg_hash(test_unsigned)
 
     print(sign)
     print(public_key)
     print(test_pubkey)
+
+    # print(type(v))
+    # print(type(r))
+    # print(type(s))
 
 
 if __name__ == "__main__":
