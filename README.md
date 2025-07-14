@@ -2,6 +2,12 @@
 
 ## Usage
 
+Export `ETHERSCAN_API_KEY`:
+```shell
+export ETHERSCAN_API_KEY="<api-key>"
+```
+
+Run `decode`:
 ```shell
 uv run decode <raw-transaction-hex>
 ```
