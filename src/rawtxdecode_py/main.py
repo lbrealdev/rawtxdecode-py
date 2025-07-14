@@ -2,6 +2,7 @@ import sys
 from rawtxdecode_py.fields import extract_transaction_fields, InnerTransactionFields
 from rawtxdecode_py.decode import decode_raw_transaction
 from rawtxdecode_py.pubkey import recover_umcompressed_public_key
+from rawtxdecode_py.abi import decode_contract_input_data
 from typing import Any, Dict
 import json
 from enum import Enum
@@ -23,9 +24,10 @@ class TransactionType(Enum):
 
 def decoded_tx_output(decoded_tx: Any, *args) -> Dict[str, Any]:
     tx_type_id = TransactionType.from_type_id(decoded_tx.type_id)
-    tx_input_data = decoded_tx.data
-
-    tx_data = {
+    tx_to_address = "0x" + decoded_tx.to.hex()
+    tx_input_data = "0x" + decoded_tx.data.hex()
+    
+    tx_details = {
         "chainId": decoded_tx.chain_id,
         "type": tx_type_id,
         "valid": decoded_tx.is_signature_valid,
@@ -35,7 +37,7 @@ def decoded_tx_output(decoded_tx: Any, *args) -> Dict[str, Any]:
         "maxFeePerGas": decoded_tx.max_fee_per_gas,
         "maxPriorityFeePerGas": decoded_tx.max_priority_fee_per_gas,
         "from": "0x" + decoded_tx.sender.hex(),
-        "to": "0x" + decoded_tx.to.hex(),
+        "to": tx_to_address,
         "publicKey": args[0]["publicKey"],
         "v": f"{decoded_tx.y_parity:02x}",
         "r": format(decoded_tx.r, "064x"),
@@ -44,15 +46,19 @@ def decoded_tx_output(decoded_tx: Any, *args) -> Dict[str, Any]:
     }
 
     if len(tx_input_data) != 0:
-        tx_data.update(
+
+        contract_function = decode_contract_input_data(tx_to_address, tx_input_data)
+
+        tx_details.update(
             {
-                "input": "0x" + decoded_tx.data.hex(),
+                "input": tx_input_data,
                 "functionHash": "0x" + decoded_tx.data[:4].hex(),
-                "possibleFunctions": "tbd",
+                "functionName": contract_function["functionName"],
+                "decodedInputs": contract_function["decodedInputs"],
             }
         )
 
-    return tx_data
+    return tx_details
 
 
 def main():
@@ -64,11 +70,11 @@ def main():
 
     decode_tx = decode_raw_transaction(raw_tx_hex[0])
 
-    # Ordered and formatted transaction dictionary
     tx_type = decode_tx.type_id
     tx_data = decode_tx.data
     tx_fields = InnerTransactionFields(decode_tx._inner)
 
+    # Ordered and formatted transaction dictionary
     ordered_fields = extract_transaction_fields(tx_fields, tx_type, tx_data)
 
     # Extract v, r, s components from decoded transaction
