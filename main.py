@@ -24,7 +24,7 @@ def convert_hex_to_bytes(tx_hex: str) -> bytes:
     return to_bytes(hexstr=tx_hex)
 
 
-def tx_signature(v: int, r: int, s: int) -> Signature:
+def get_tx_signature(v: int, r: int, s: int) -> Signature:
     """
     :param v: Recovery identifier from Ethereum transaction signature.
     :param r: R component of the ECDSA signature.
@@ -58,43 +58,24 @@ def main():
 
     ordered_fields = extract_transaction_fields(tx_fields, tx_type, tx_data)
 
-    # Transaction ECDSA digital signature
+    # Extract v, r, s components from decoded transaction
     v, r, s = decode_tx.y_parity, decode_tx.r, decode_tx.s
 
-    sign = tx_signature(v, r, s)
+    # Create signature object
+    signature = get_tx_signature(v, r, s)
 
-    # Debug fields dict types
-    # for k, v in fields().items():
-    #     print(f"Key: {k}, Value: {type(v)}")
+    # Hash of the unsigned transaction (to verify signature)
+    unsigned_hash = get_unsigned_tx_hash(ordered_fields)
+    tx_hash_bytes = decode_hex(unsigned_hash[0])
 
-    # Debug vrs dict types
-    # for k, v in vrs.items():
-    #     print(f"Key: {k}, Value: {type(v)}")
+    # Recover the public key from the signature and transaction hash
+    public_key = signature.recover_public_key_from_msg_hash(tx_hash_bytes)
 
-    unsigned_tx_object = serializable_unsigned_transaction_from_dict(ordered_fields)
-    unsigned_tx_hash_bytes = decode_hex(unsigned_tx_object.hash().hex())
-    public_key = sign.recover_public_key_from_msg_hash(unsigned_tx_hash_bytes)
+    # Convert public key to uncompressed SEC1 format (0x04 + X + Y)
+    uncompressed_public_key = b'\x04' + public_key.to_bytes()
+    uncompressed_public_key_hex = "0x" + uncompressed_public_key.hex()
 
-    # unsigned_tx_hash_hex = unsigned_tx_object.hash().hex()
-    # unsigned_tx_hash_bytes = decode_hex(unsigned_tx_hash_hex)
-
-    # print(f"hex: {unsigned_tx_hash_hex}")
-    # print(f"bytes: {unsigned_tx_hash_bytes}")
-    # print(f"test: {unsigned_tx_hash_bytes}")
-
-    # print(decode_tx.y_parity)
-
-    test = get_unsigned_tx_hash(ordered_fields)
-    test_unsigned = decode_hex(test[0])
-    test_pubkey = sign.recover_public_key_from_msg_hash(test_unsigned)
-
-    print(sign)
-    print(public_key)
-    print(test_pubkey)
-
-    # print(type(v))
-    # print(type(r))
-    # print(type(s))
+    print(uncompressed_public_key_hex)
 
 
 if __name__ == "__main__":
