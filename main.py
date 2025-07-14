@@ -1,7 +1,4 @@
-from eth_utils import (
-    to_bytes,
-    decode_hex,
-)
+from eth_utils import decode_hex
 from eth_keys.datatypes import Signature
 from eth_account._utils.signing import extract_chain_id, to_standard_v
 from eth_account._utils.legacy_transactions import (
@@ -14,14 +11,6 @@ from fields import (
     InnerTransactionFields,
 )
 from decode import decode_raw_transaction
-
-
-def convert_hex_to_bytes(tx_hex: str) -> bytes:
-    """
-    :param tx_hex: Hex-encoded Ethereum transaction string (with or without '0x' prefix).
-    :return: Transaction as raw bytes.
-    """
-    return to_bytes(hexstr=tx_hex)
 
 
 def get_tx_signature(v: int, r: int, s: int) -> Signature:
@@ -46,10 +35,9 @@ def get_unsigned_tx_hash(tx_dict) -> tuple[str, bytes]:
 
 
 def main():
-    hex_input = sys.argv[1]
+    raw_tx_hex = sys.argv[1]
 
-    tx_bytes = convert_hex_to_bytes(hex_input)
-    decode_tx = decode_raw_transaction(tx_bytes)
+    decode_tx = decode_raw_transaction(raw_tx_hex)
 
     # Ordered and formatted transaction dictionary
     tx_type = decode_tx.type_id
@@ -72,7 +60,7 @@ def main():
     public_key = signature.recover_public_key_from_msg_hash(tx_hash_bytes)
 
     # Convert public key to uncompressed SEC1 format (0x04 + X + Y)
-    uncompressed_public_key = b'\x04' + public_key.to_bytes()
+    uncompressed_public_key = b"\x04" + public_key.to_bytes()
     uncompressed_public_key_hex = "0x" + uncompressed_public_key.hex()
 
     print(uncompressed_public_key_hex)
