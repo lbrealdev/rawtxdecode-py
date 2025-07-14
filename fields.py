@@ -1,10 +1,13 @@
+from typing import Any, Dict
 from hexbytes import HexBytes
 
 
-def extract_trasaction_fields(decoded):
+def extract_transaction_fields(decoded: Any) -> Dict[str, Any]:
     """
-    clojure function
+    :param decoded: Decoded transaction object containing transaction fields.
+    :return: Ordered and formatted transaction dictionary for unsigned transaction serialization.
     """
+
     ordered_keys = [
         "to",
         "nonce",
@@ -46,11 +49,8 @@ def extract_trasaction_fields(decoded):
         if k in tx_fields
     }
 
-    # Convert dictionary fields to HexBytes
-    def converted_fields():
-        for k, v in ordered_tx_fields.items():
-            if isinstance(v, bytes):
-                ordered_tx_fields[k] = HexBytes(v)
-        return ordered_tx_fields
+    for k, v in ordered_tx_fields.items():
+        if isinstance(v, bytes):
+            ordered_tx_fields[k] = HexBytes(v)
 
-    return converted_fields
+    return ordered_tx_fields
