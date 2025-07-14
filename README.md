@@ -2,12 +2,16 @@
 
 ## Usage
 
+> [!IMPORTANT]
+> This CLI currently **supports only type 2 (EIP-1559) Ethereum transactions**.  
+> Legacy transactions (type 0) and type 1 (EIP-2930) are not supported yet.
+
 Export `ETHERSCAN_API_KEY`:
 ```shell
 export ETHERSCAN_API_KEY="<api-key>"
 ```
 
-Run `decode`:
+Run the `decode` script by passing the raw transaction hex as an argument:
 ```shell
 uv run decode <raw-transaction-hex>
 ```
