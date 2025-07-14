@@ -23,13 +23,6 @@ def decode_contract_input_data(address: str, input: str) -> dict:
 
     try:
         func_obj, func_params = contract.decode_function_input(input)
-        return {
-            "functionName": str(func_obj.fn_name),
-            "decodedInputs": func_params
-        }
+        return {"functionName": str(func_obj.fn_name), "decodedInputs": func_params}
     except Exception as e:
-        return {
-            "functionName": "Unknown",
-            "decodedInputs": [],
-            "error": str(e)
-        }
+        return {"functionName": "Unknown", "decodedInputs": [], "error": str(e)}

@@ -16,5 +16,9 @@
   "value": "0",
   "input": "0xa9059cbb000000000000000000000000a29e963992597b21bcdcaa969d571984869c4ff50000000000000000000000000000000000000000000000000000008e06d55400",
   "functionHash": "0xa9059cbb",
-  "possibleFunctions": "tbd"
+  "functionName": "transfer",
+  "decodedInputs": {
+    "_to": "0xa29E963992597B21bcDCaa969d571984869C4FF5",
+    "_value": 610000000000
+  }
 }

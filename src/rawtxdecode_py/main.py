@@ -25,8 +25,8 @@ class TransactionType(Enum):
 def decoded_tx_output(decoded_tx: Any, *args) -> Dict[str, Any]:
     tx_type_id = TransactionType.from_type_id(decoded_tx.type_id)
     tx_to_address = "0x" + decoded_tx.to.hex()
-    tx_input_data = "0x" + decoded_tx.data.hex()
-    
+    tx_input_data = decoded_tx.data
+
     tx_details = {
         "chainId": decoded_tx.chain_id,
         "type": tx_type_id,
@@ -46,12 +46,12 @@ def decoded_tx_output(decoded_tx: Any, *args) -> Dict[str, Any]:
     }
 
     if len(tx_input_data) != 0:
-
-        contract_function = decode_contract_input_data(tx_to_address, tx_input_data)
+        input_data = "0x" + tx_input_data.hex()
+        contract_function = decode_contract_input_data(tx_to_address, input_data)
 
         tx_details.update(
             {
-                "input": tx_input_data,
+                "input": input_data,
                 "functionHash": "0x" + decoded_tx.data[:4].hex(),
                 "functionName": contract_function["functionName"],
                 "decodedInputs": contract_function["decodedInputs"],
