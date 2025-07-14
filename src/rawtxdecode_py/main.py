@@ -7,6 +7,21 @@ from rawtxdecode_py.decode import decode_raw_transaction
 from rawtxdecode_py.pubkey import recover_umcompressed_public_key
 from typing import Any, Dict
 import json
+from enum import Enum
+
+
+class TransactionType(Enum):
+    LEGACY = 0
+    ACCESS_LIST = 1
+    EIP1559 = 2
+
+    @classmethod
+    def from_type_id(cls, type_id: int) -> str:
+        return {
+            cls.LEGACY.value: "Legacy",
+            cls.ACCESS_LIST.value: "Access List",
+            cls.EIP1559.value: "EIP-1559",
+        }.get(type_id, "Unknown type")
 
 
 def decoded_tx_output(decoded_tx: Any, *args) -> Dict[str, Any]:
@@ -16,11 +31,11 @@ def decoded_tx_output(decoded_tx: Any, *args) -> Dict[str, Any]:
         2: "EIP-1559",
     }
 
-    type_label = TX_TYPE_LABELS.get(decoded_tx.type_id, "Unknown type")
+    type_id = TransactionType.from_type_id(decoded_tx.type_id)
 
     tx_data = {
         "chainId": decoded_tx.chain_id,
-        "type": type_label,
+        "type": type_id,
         "valid": decoded_tx.is_signature_valid,
         "hash": "0x" + decoded_tx.hash.hex(),
         "nonce": decoded_tx.nonce,
