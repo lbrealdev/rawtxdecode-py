@@ -5,6 +5,33 @@ from fields import (
 )
 from decode import decode_raw_transaction
 from pubkey import recover_umcompressed_public_key
+from typing import Any, Dict
+import json
+
+
+def decoded_tx_output(decoded_tx: Any, *args) -> Dict[str, Any]:
+    tx_data = {
+        "chainId": decoded_tx.chain_id,
+        "type": decoded_tx.type_id,
+        "valid": decoded_tx.is_signature_valid,
+        "hash": "0x" + decoded_tx.hash.hex(),
+        "nonce": decoded_tx.nonce,
+        "gasLimit": decoded_tx.gas,
+        "maxFeePerGas": decoded_tx.max_fee_per_gas,
+        "maxPriorityFeePerGas": decoded_tx.max_priority_fee_per_gas,
+        "from": "0x" + decoded_tx.sender.hex(),
+        "to": "0x" + decoded_tx.to.hex(),
+        "publicKey": args[0]["publicKey"],
+        "v": decoded_tx.y_parity,
+        "r": format(decoded_tx.r, "064x"),
+        "s": format(decoded_tx.s, "064x"),
+        "value": str(decoded_tx.value),
+        "input": "0x" + decoded_tx.data.hex(),
+        "functionHash": "0x" + decoded_tx.data[:4].hex(),
+        "possibleFunctions": "tbd",
+    }
+
+    return tx_data
 
 
 def main():
@@ -24,7 +51,9 @@ def main():
 
     public_key = recover_umcompressed_public_key(ordered_fields, v, r, s)
 
-    print(public_key)
+    tx_output = decoded_tx_output(decode_tx, public_key)
+    json_format = json.dumps(tx_output, indent=2)
+    print(json_format)
 
 
 if __name__ == "__main__":
