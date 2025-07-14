@@ -1,8 +1,5 @@
 import sys
-from rawtxdecode_py.fields import (
-    extract_transaction_fields,
-    InnerTransactionFields,
-)
+from rawtxdecode_py.fields import extract_transaction_fields, InnerTransactionFields
 from rawtxdecode_py.decode import decode_raw_transaction
 from rawtxdecode_py.pubkey import recover_umcompressed_public_key
 from typing import Any, Dict
@@ -25,11 +22,12 @@ class TransactionType(Enum):
 
 
 def decoded_tx_output(decoded_tx: Any, *args) -> Dict[str, Any]:
-    type_id = TransactionType.from_type_id(decoded_tx.type_id)
+    tx_type_id = TransactionType.from_type_id(decoded_tx.type_id)
+    tx_input_data = decoded_tx.data
 
     tx_data = {
         "chainId": decoded_tx.chain_id,
-        "type": type_id,
+        "type": tx_type_id,
         "valid": decoded_tx.is_signature_valid,
         "hash": "0x" + decoded_tx.hash.hex(),
         "nonce": decoded_tx.nonce,
@@ -39,14 +37,20 @@ def decoded_tx_output(decoded_tx: Any, *args) -> Dict[str, Any]:
         "from": "0x" + decoded_tx.sender.hex(),
         "to": "0x" + decoded_tx.to.hex(),
         "publicKey": args[0]["publicKey"],
-        "v": decoded_tx.y_parity,
+        "v": f"{decoded_tx.y_parity:02x}",
         "r": format(decoded_tx.r, "064x"),
         "s": format(decoded_tx.s, "064x"),
         "value": str(decoded_tx.value),
-        "input": "0x" + decoded_tx.data.hex(),
-        "functionHash": "0x" + decoded_tx.data[:4].hex(),
-        "possibleFunctions": "tbd",
     }
+
+    if len(tx_input_data) != 0:
+        tx_data.update(
+            {
+                "input": "0x" + decoded_tx.data.hex(),
+                "functionHash": "0x" + decoded_tx.data[:4].hex(),
+                "possibleFunctions": "tbd",
+            }
+        )
 
     return tx_data
 
