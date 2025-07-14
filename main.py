@@ -10,8 +10,9 @@ from eth_account._utils.signing import extract_chain_id, to_standard_v
 from eth_account._utils.legacy_transactions import (
     serializable_unsigned_transaction_from_dict,
 )
-from hexbytes import HexBytes
 import sys
+
+from fields import extract_trasaction_fields
 
 
 def convert_hex_to_bytes(hex_str: str) -> bytes:
@@ -23,51 +24,6 @@ def decode_raw_transaction(tx: bytes) -> dict:
     return decoded_tx
 
 
-def extract_trasaction_fields(decoded):
-    ordered_keys = [
-        "to",
-        "nonce",
-        "value",
-        "gas",
-        "chain_id",
-        "max_fee_per_gas",
-        "max_priority_fee_per_gas",
-        "type",
-        "data",
-    ]
-
-    rename_map = {
-        "chain_id": "chainId",
-        "max_fee_per_gas": "maxFeePerGas",
-        "max_priority_fee_per_gas": "maxPriorityFeePerGas",
-    }
-
-    inner = decoded.__dict__.get("_inner").as_dict()
-
-    tx_fields = {
-        k: inner[k]
-        for k in [
-            "to",
-            "nonce",
-            "value",
-            "gas",
-            "chain_id",
-            "max_fee_per_gas",
-            "max_priority_fee_per_gas",
-        ]
-    }
-
-    tx_fields.update({"type": decoded.type_id, "data": decoded.data})
-
-    ordered_tx_fields = {
-        rename_map.get(k, k): (tx_fields[k] if k in tx_fields else None)
-        for k in ordered_keys
-        if k in tx_fields
-    }
-
-    return ordered_tx_fields
-
-
 def main():
     hex_input = sys.argv[1]
 
@@ -75,7 +31,21 @@ def main():
     decode_tx = decode_raw_transaction(tx_bytes)
     fields = extract_trasaction_fields(decode_tx)
 
-    print(fields)
+    # print(fields())
+
+    # Convert to and data fields from bytes to HexBytes
+    # for k, v in fields.items():
+    #     if isinstance(v, bytes):
+    #         fields[k] = HexBytes(v)
+
+    # Debug fields dict types
+    # for k, v in fields().items():
+    #     print(f"Key: {k}, Value: {type(v)}")
+
+    serializable_tx_from_dict = serializable_unsigned_transaction_from_dict(fields())
+    encoded_hash = serializable_tx_from_dict.hash().hex()
+
+    print(encoded_hash)
 
 
 if __name__ == "__main__":
