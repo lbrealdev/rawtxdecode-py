@@ -25,12 +25,6 @@ class TransactionType(Enum):
 
 
 def decoded_tx_output(decoded_tx: Any, *args) -> Dict[str, Any]:
-    TX_TYPE_LABELS = {
-        0: "Legacy",
-        1: "Access List",
-        2: "EIP-1559",
-    }
-
     type_id = TransactionType.from_type_id(decoded_tx.type_id)
 
     tx_data = {
