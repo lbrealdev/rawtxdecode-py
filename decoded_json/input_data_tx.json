@@ -1,29 +1,3 @@
-# rawtxdecode python
-
-## Usage
-
-> [!IMPORTANT]
-> This CLI currently **supports only type 2 (EIP-1559) Ethereum transactions**.  
-> Legacy transactions (type 0) and type 1 (EIP-2930) are not supported yet.
-
-Export `ETHERSCAN_API_KEY`:
-```shell
-export ETHERSCAN_API_KEY="<api-key>"
-```
-
-Run the `decode` script by passing the raw transaction hex as an argument:
-```shell
-uv run decode <raw-transaction-hex>
-```
-
-Example:
-```shell
-uv run decode 0x02f8b2018207a984010bef3384780f481a8301482094dac17f958d2ee523a2206206994597c13d831ec780b844a9059cbb000000000000000000000000a29e963992597b21bcdcaa969d571984869c4ff50000000000000000000000000000000000000000000000000000008e06d55400c080a063ec94403b94ef380a4c4c31b3df991ca456d84943f53e6d207d57d697a8ee98a01631a9ad2884defacfa06eca1d8cfc04c26b119f206a72006e8b0f1802ceab9f
-```
-
-## Example Output (JSON)
-
-```json
 {
   "chainId": 1,
   "type": "EIP-1559",
@@ -48,10 +22,3 @@ uv run decode 0x02f8b2018207a984010bef3384780f481a8301482094dac17f958d2ee523a220
     "_value": 610000000000
   }
 }
-```
-
-## Development
-
-```shell
-uv add eth-account eth-utils hexbytes py-evm rlp
-```
