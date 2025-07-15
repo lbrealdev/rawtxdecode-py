@@ -61,11 +61,11 @@ def decoded_tx_output(decoded_tx: Any, public_key: str) -> Dict[str, Any]:
     return tx_details
 
 
-def _json_stringify(data):
+def _stringify_json(data):
     if isinstance(data, dict):
-        return {k: _json_stringify(v) for k, v in data.items()}
+        return {k: _stringify_json(v) for k, v in data.items()}
     elif isinstance(data, list):
-        return [_json_stringify(v) for v in data]
+        return [_stringify_json(v) for v in data]
     elif isinstance(data, bool):
         return data
     elif isinstance(data, bytes):
@@ -96,13 +96,13 @@ def main():
     public_key = recover_umcompressed_public_key(ordered_fields, v, r, s)
 
     tx_output = decoded_tx_output(decode_tx, public_key)
-    
+
     # json output `default`
     # json_format = json.dumps(tx_output, indent=2)
     # print(json_format)
 
     # json output `stringify`
-    stringify_json = _json_stringify(tx_output)
+    stringify_json = _stringify_json(tx_output)
     json_format = json.dumps(stringify_json, indent=2)
     print(json_format)
 
