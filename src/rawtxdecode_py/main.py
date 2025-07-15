@@ -22,7 +22,7 @@ class TransactionType(Enum):
         }.get(type_id, "Unknown type")
 
 
-def decoded_tx_output(decoded_tx: Any, *args) -> Dict[str, Any]:
+def decoded_tx_output(decoded_tx: Any, public_key: str) -> Dict[str, Any]:
     tx_type_id = TransactionType.from_type_id(decoded_tx.type_id)
     tx_to_address = "0x" + decoded_tx.to.hex()
     tx_input_data = decoded_tx.data
@@ -38,7 +38,7 @@ def decoded_tx_output(decoded_tx: Any, *args) -> Dict[str, Any]:
         "maxPriorityFeePerGas": str(decoded_tx.max_priority_fee_per_gas),
         "from": "0x" + decoded_tx.sender.hex(),
         "to": tx_to_address,
-        "publicKey": args[0]["publicKey"],
+        "publicKey": public_key["publicKey"],
         "v": f"{decoded_tx.y_parity:02x}",
         "r": format(decoded_tx.r, "064x"),
         "s": format(decoded_tx.s, "064x"),
@@ -59,6 +59,19 @@ def decoded_tx_output(decoded_tx: Any, *args) -> Dict[str, Any]:
         )
 
     return tx_details
+
+
+def _json_stringify(data):
+    if isinstance(data, dict):
+        return {k: _json_stringify(v) for k, v in data.items()}
+    elif isinstance(data, list):
+        return [_json_stringify(v) for v in data]
+    elif isinstance(data, bool):
+        return data
+    elif isinstance(data, bytes):
+        return "0x" + data.hex()
+    else:
+        return str(data)
 
 
 def main():
@@ -83,7 +96,14 @@ def main():
     public_key = recover_umcompressed_public_key(ordered_fields, v, r, s)
 
     tx_output = decoded_tx_output(decode_tx, public_key)
-    json_format = json.dumps(tx_output, indent=2)
+    
+    # json output `default`
+    # json_format = json.dumps(tx_output, indent=2)
+    # print(json_format)
+
+    # json output `stringify`
+    stringify_json = _json_stringify(tx_output)
+    json_format = json.dumps(stringify_json, indent=2)
     print(json_format)
 
 
