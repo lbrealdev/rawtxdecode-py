@@ -28,14 +28,14 @@ def decoded_tx_output(decoded_tx: Any, *args) -> Dict[str, Any]:
     tx_input_data = decoded_tx.data
 
     tx_details = {
-        "chainId": decoded_tx.chain_id,
-        "type": tx_type_id,
+        "chainId": str(decoded_tx.chain_id),
+        "type": str(tx_type_id),
         "valid": decoded_tx.is_signature_valid,
         "hash": "0x" + decoded_tx.hash.hex(),
-        "nonce": decoded_tx.nonce,
-        "gasLimit": decoded_tx.gas,
-        "maxFeePerGas": decoded_tx.max_fee_per_gas,
-        "maxPriorityFeePerGas": decoded_tx.max_priority_fee_per_gas,
+        "nonce": str(decoded_tx.nonce),
+        "gasLimit": str(decoded_tx.gas),
+        "maxFeePerGas": str(decoded_tx.max_fee_per_gas),
+        "maxPriorityFeePerGas": str(decoded_tx.max_priority_fee_per_gas),
         "from": "0x" + decoded_tx.sender.hex(),
         "to": tx_to_address,
         "publicKey": args[0]["publicKey"],
