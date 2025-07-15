@@ -1,5 +1,6 @@
 from typing import Any, Dict
 from enum import Enum
+from rawtxdecode_py.abi import decode_contract_input_data
 
 
 class TransactionType(Enum):
@@ -56,6 +57,10 @@ def create_tx_output(decoded_tx: Any, public_key: str) -> Dict[str, Any]:
 
 
 def stringify_json(data):
+    """
+    :param data: Any Python object (dict, list, or value) to stringify.
+    :return: Same structure with all values converted to strings, except booleans.
+    """
     if isinstance(data, dict):
         return {k: stringify_json(v) for k, v in data.items()}
     elif isinstance(data, list):

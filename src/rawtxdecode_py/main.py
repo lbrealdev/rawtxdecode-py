@@ -2,7 +2,6 @@ import sys
 from rawtxdecode_py.fields import extract_transaction_fields, InnerTransactionFields
 from rawtxdecode_py.decode import decode_raw_transaction
 from rawtxdecode_py.pubkey import recover_umcompressed_public_key
-from rawtxdecode_py.abi import decode_contract_input_data
 from rawtxdecode_py.rawtx_output import create_tx_output, stringify_json
 import json
 
