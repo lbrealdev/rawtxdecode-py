@@ -1,6 +1,6 @@
 # Alias
 
-alias lambda := run-lambda
+alias lambda := invoke-lambda
 
 # Variables
 
@@ -21,7 +21,7 @@ raw_tx_hex := '0x02f8b2018207a984010bef3384780f481a8301482094dac17f958d2ee523a22
 # Lambda recipes
 
 [working-directory: 'app']
-@run-lambda:
+@invoke-lambda:
     uv run invoke_lambda.py
 
 @lambda-pkg:
