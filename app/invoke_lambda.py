@@ -9,7 +9,7 @@ if __name__ == "__main__":
     event = {"hex": RAW_TX_HEX}
     context = {}
     result = lambda_handler(event, context)
-    
+
     # Default output (dict)
     # print(result)
 

@@ -15,7 +15,7 @@ def lambda_handler(event, context):
     tx_type = decode_raw_tx.type_id
     tx_data = decode_raw_tx.data
     tx_fields = InnerTransactionFields(decode_raw_tx._inner)
-    
+
     tx_fields_ordered = extract_transaction_fields(tx_fields, tx_type, tx_data)
 
     v, r, s = decode_raw_tx.y_parity, decode_raw_tx.r, decode_raw_tx.s
