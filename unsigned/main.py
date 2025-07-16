@@ -22,13 +22,13 @@ def main():
     print("#01 - Default with HexBytes")
     print()
 
-    decode_unsigned_raw_tx_1 = decode_unsigned_raw_transaction(raw_tx_hex)
+    # decode_unsigned_raw_tx_1 = decode_unsigned_raw_transaction(raw_tx_hex)
     # print(dir(decode_unsigned_raw_tx_1))
 
     # Debug transaction fields #01
-    tx_fields_1 = decode_unsigned_raw_tx_1.fields["_inner"].as_dict()
-    for key, value in tx_fields_1.items():
-        print(f"key: {key} - value: {value}")
+    # tx_fields_1 = decode_unsigned_raw_tx_1.fields["_inner"].as_dict()
+    # for key, value in tx_fields_1.items():
+    #     print(f"key: {key} - value: {value}")
     
 
 
@@ -37,12 +37,12 @@ def main():
     print("#02 - Default")
     print()
 
-    decode_unsigned_raw_tx_2 = decode_raw_transaction_test(raw_tx_hex)
+    # decode_unsigned_raw_tx_2 = decode_raw_transaction_test(raw_tx_hex)
     # print(dir(decode_unsigned_raw_tx_2))
 
-    tx_fields_2 = decode_unsigned_raw_tx_2.fields["_inner"].as_dict()
-    for key, value in tx_fields_2.items():
-        print(f"key: {key} - value: {value}")
+    # tx_fields_2 = decode_unsigned_raw_tx_2.fields["_inner"].as_dict()
+    # for key, value in tx_fields_2.items():
+    #     print(f"key: {key} - value: {value}")
 
     
 
