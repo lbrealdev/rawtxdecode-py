@@ -139,20 +139,22 @@ def decode_raw_transaction_unsigned(tx: str):
             print("Decoding...")
 
             decode_unsigned_tx = rlp.decode(tx_payload, List(eip1559_unsigned_fields))
-            encode_unsigned_tx = rlp.encode(decode_unsigned_tx, List(eip1559_unsigned_fields))
+            encode_unsigned_tx = rlp.encode(
+                decode_unsigned_tx, List(eip1559_unsigned_fields)
+            )
             unsigned_tx_hash = generate_tx_hash(tx_type, encode_unsigned_tx)
 
             print(f"Hash (unsigned): {unsigned_tx_hash}")
 
-            tx_function = convert_rlp_to_dict(decode_unsigned_tx)
-            #print(tx_function["to"])
+            # tx_function = convert_rlp_to_dict(decode_unsigned_tx)
+            # # print(tx_function["to"])
 
-            tx_type_class = EIP1559UnsignedTransaction(*decode_unsigned_tx)
-            #print(tx_type_class)
+            # tx_type_class = EIP1559UnsignedTransaction(*decode_unsigned_tx)
+            # # print(tx_type_class)
         else:
             print("Signed transaction!")
             print("Decoding...")
-            
+
             decode_signed_tx = rlp.decode(tx_payload, List(eip1559_signed_fields))
             encode_signed_tx = rlp.encode(decode_signed_tx, List(eip1559_signed_fields))
             signed_tx_hash = generate_tx_hash(tx_type, encode_signed_tx)

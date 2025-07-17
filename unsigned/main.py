@@ -1,9 +1,7 @@
 import sys
 from rawtxdecode_py.decode import (
-    decode_raw_transaction,
     decode_raw_transaction_unsigned,
 )
-import json
 
 
 def main():
@@ -13,7 +11,7 @@ def main():
         print("Usage: main.py <raw-transaction-hash>")
         sys.exit(1)
 
-    decode_tx = decode_raw_transaction_unsigned(raw_tx)
+    decode_raw_transaction_unsigned(raw_tx)
 
 
 if __name__ == "__main__":
