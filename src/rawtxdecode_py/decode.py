@@ -125,14 +125,13 @@ def decode_raw_transaction_unsigned(tx: str):
     if tx_bytes[0] in (0x01, 0x02):
         tx_type = tx_bytes[0]
         tx_payload = tx_bytes[1:]
+        tx_rlp = rlp.decode(tx_payload)
 
         # Debug (test)
         try:
             print(f"Transaction type: {TransactionType.from_type_id(tx_type)}")
         except ValueError:
             raise ValueError(f"Transaction type {tx_type:#x} not supported")
-
-        tx_rlp = rlp.decode(tx_payload)
 
         if len(tx_rlp) == 9:
             print("Unsigned transaction!")
@@ -163,4 +162,8 @@ def decode_raw_transaction_unsigned(tx: str):
             # print(decode_signed_tx)
             # print(type(decode_signed_tx))
     else:
-        print("Legacy transaction")
+        tx_legacy = {
+            "error": "UNSUPPORTED_TX_TYPE",
+            "reason": "Legacy transactions (type 0) are not supported yet."
+        }
+        print(tx_legacy)
