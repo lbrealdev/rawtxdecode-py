@@ -4,16 +4,16 @@ from enum import Enum
 
 
 class TransactionType(Enum):
-    LEGACY = 0
-    ACCESS_LIST = 1
-    EIP1559 = 2
+    LEGACY_TX = 0
+    ACCESS_LIST_TX = 1
+    DYNAMIC_FEE_TX = 2
 
     @classmethod
     def from_type_id(cls, type_id: int) -> str:
         return {
-            cls.LEGACY.value: "Legacy",
-            cls.ACCESS_LIST.value: "Access List",
-            cls.EIP1559.value: "EIP-1559",
+            cls.LEGACY_TX.value: "Legacy",
+            cls.ACCESS_LIST_TX.value: "Access List",
+            cls.DYNAMIC_FEE_TX.value: "EIP-1559",
         }.get(type_id, "Unknown type")
 
 
